@@ -1,9 +1,9 @@
 #include<Servo.h>
 #include<AFMotor.h>
-#define LEFT
-#define echopin// echo pin
-#define trigpin// Trigger pin
-#define RIGHT
+#define LEFT A0
+#define echopin A1// echo pin
+#define trigpin A2// Trigger pin
+#define RIGHT A3
 // this is to setup the motors
 AF_DCMotor Motor1(1,MOTOR12_1KHZ);
 AF_DCMotor Motor2(2,MOTOR12_1KHZ);
@@ -24,7 +24,7 @@ mytank.write(posi);
 delay(20);
 }
 for(posi = 0; posi<=90; posi += 1) { //to set the position to 0 if the position is less than 90
-mytank.write(pos);
+mytank.write(posi);
 delay(20);
 }
 pinMode(RIGHT, INPUT);
@@ -49,10 +49,19 @@ else if((RightValue==1) && (LeftValue==0)){turnLeft();}
 else if((RightValue==1) && (LeftValue==1)){stop();}
 else if(distance > 5 && distance < 10){stop();}
 else if(distance < 5){backward();}
+delay(50);}
+long read_cm(){
+  digitalWrite(trigpin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin, HIGH);
+  delayMicroseconds(10);
+  time = pulseIn (echopin, HIGH);
+  return time / 29 / 2;
+
 //this part controls the motors to turn the robot after detecting the distance from the sensor.
 }
 
-void forword(){// the tank starts to go forward
+void forward(){// the tank starts to go forward
 Motor1.setSpeed(120);
 Motor1.run(FORWARD);
 Motor2.setSpeed(120);
@@ -63,7 +72,7 @@ Motor4.setSpeed(120);
 Motor4.run(FORWARD);
 }
 
-void backword(){ // the tank starts to go backwards
+void backward(){ // the tank starts to go backwards
 Motor1.setSpeed(120);
 Motor1.run(BACKWARD); 
 Motor2.setSpeed(120);
