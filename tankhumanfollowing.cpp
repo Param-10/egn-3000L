@@ -1,13 +1,14 @@
-#include<NewPing.h>
-#include<AFMotor.h>
+#include<NewPing.h>//new ping is used to better the ultrasonic sensor
+#include<AFMotor.h>// this is a library for the motor
 #define RIGHT A2
 #define LEFT A3
 #define TRIGGER_PIN A1
 #define ECHO_PIN A0
 #define MAX_DISTANCE 100
-  
+// the lines above are defining the pins and their positioning
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
-
+//defines the sonar ping
+//defines the values for the motor
 AF_DCMotor Motor1(1,MOTOR12_1KHZ);
 AF_DCMotor Motor2(2,MOTOR12_1KHZ);
 AF_DCMotor Motor3(3,MOTOR34_1KHZ);
@@ -16,7 +17,7 @@ AF_DCMotor Motor4(4,MOTOR34_1KHZ);
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-
+//sets input or output values to the pin
 pinMode(RIGHT, INPUT);
 pinMode(LEFT, INPUT);
 
@@ -30,7 +31,7 @@ void loop() {
 
 int Right_Value = digitalRead(RIGHT);
 int Left_Value = digitalRead(LEFT);
-
+// these are the forward backward and stopping codes
 if((Right_Value==1) && (distance>=10 && distance<=30)&&(Left_Value==1)){
   Motor1.setSpeed(120);
   Motor1.run(FORWARD);
