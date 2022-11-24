@@ -1,14 +1,14 @@
 #include <NewPing.h>
-
+//new ping is a library used to better the ping of the ultrasonic sensor
 #define ULTRASONIC_SENSOR_TRIG 7
 #define ULTRASONIC_SENSOR_ECHO 8
-
+//defines the trig and echo pins on the sensor
 #define MAX_FORWARD_MOTOR_SPEED 75
 #define MAX_MOTOR_TURN_SPEED_ADJUSTMENT 50
-
+//defines the minimum and maximum distance for the sensor
 #define MIN_DISTANCE 10
 #define MAX_DISTANCE 30
-
+//defines the pins for the IR sensor
 #define IR_SENSOR_RIGHT 2
 #define IR_SENSOR_LEFT 3
 
