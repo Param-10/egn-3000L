@@ -1,110 +1,71 @@
-#include <NewPing.h>
-//new ping is a library used to better the ping of the ultrasonic sensor
-#define ULTRASONIC_SENSOR_TRIG 7
-#define ULTRASONIC_SENSOR_ECHO 8
-//defines the trig and echo pins on the sensor
-#define MAX_FORWARD_MOTOR_SPEED 75
-#define MAX_MOTOR_TURN_SPEED_ADJUSTMENT 50
-//defines the minimum and maximum distance for the sensor
-#define MIN_DISTANCE 10
-#define MAX_DISTANCE 30
-//defines the pins for the IR sensor
-#define IR_SENSOR_RIGHT 2
-#define IR_SENSOR_LEFT 3
+//defines the wires to the motors and the ultrasonic sensors.
+int trigPin = 3;
+int echoPin = 2;
 
-//Right motor
-int enableRightMotor=11;
-int rightMotorPin1=10;
-int rightMotorPin2=9;
+int leftmotor4 =8;
+int leftmotor5 = 9;
+int rightmotor6 = 10;
+int rightmotor7 = 11;
 
-//Left motor
-int enableLeftMotor=4;
-int leftMotorPin1=5;
-int leftMotorPin2=6;
-
-NewPing mySensor(ULTRASONIC_SENSOR_TRIG, ULTRASONIC_SENSOR_ECHO, 400);
-
+long duration, distance;
+//defines the input and output to the motors. 
 void setup()
 {
-  // put your setup code here, to run once:
-  pinMode(enableRightMotor, OUTPUT);
-  pinMode(rightMotorPin1, OUTPUT);
-  pinMode(rightMotorPin2, OUTPUT);
-  
-  pinMode(enableLeftMotor, OUTPUT);
-  pinMode(leftMotorPin1, OUTPUT);
-  pinMode(leftMotorPin2, OUTPUT);
+  delay(random(500,2000));
+  Serial.begin(9600);
+  pinMode(leftmotor4, OUTPUT);
+  pinMode(leftmotor5, OUTPUT);
+  pinMode(rightmotor6, OUTPUT);
+  pinMode(rightmotor7, OUTPUT);
 
-  pinMode(IR_SENSOR_RIGHT, INPUT);
-  pinMode(IR_SENSOR_LEFT, INPUT);
-  rotateMotor(0,0);   
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
+//this is the main code of the robot, this will loop over and over to check the distance and the movement
+void loop(){
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  delay(10);
+//moves forward
+  if (distance > 30)
+  {
+    digitalWrite(rightmotor7, HIGH);
+    digitalWrite(rightmotor6, LOW);
+    digitalWrite(leftmotor5, HIGH);
+    digitalWrite(leftmotor4, LOW);
 
+  }
+  else if (distance < 30)
+  {
+   // Stop
+    digitalWrite(rightmotor7, LOW);
+    digitalWrite(rightmotor6, LOW);
+    digitalWrite(leftmotor5, LOW);
+    digitalWrite(leftmotor4, LOW);
+    delay(500);
+// Move Backwards
+    digitalWrite(rightmotor7, LOW);
+    digitalWrite(rightmotor6, HIGH);
+    digitalWrite(leftmotor5, LOW);
+    digitalWrite(leftmotor4, HIGH);
+    delay(500);
+// Stop
+    digitalWrite(rightmotor7, LOW);
+    digitalWrite(rightmotor6, LOW);
+    digitalWrite(leftmotor5,LOW);
+    digitalWrite(leftmotor4, LOW);
+    delay(100);
 
-void loop()
-{
-  int distance = mySensor.ping_cm();
-  int rightIRSensorValue = digitalRead(IR_SENSOR_RIGHT);
-  int leftIRSensorValue = digitalRead(IR_SENSOR_LEFT);
+    digitalWrite(rightmotor7, HIGH);
+    digitalWrite(rightmotor6, LOW);
+    digitalWrite(leftmotor4, LOW);
+    digitalWrite(leftmotor5, LOW);
+    delay(500);
 
-  //NOTE: If IR sensor detects the hand then its value will be LOW else the value will be HIGH
-  
-  //If right sensor detects hand, then turn right. We increase left motor speed and decrease the right motor speed to turn towards right
-  if (rightIRSensorValue == LOW && leftIRSensorValue == HIGH )
-  {
-      rotateMotor(MAX_FORWARD_MOTOR_SPEED - MAX_MOTOR_TURN_SPEED_ADJUSTMENT, MAX_FORWARD_MOTOR_SPEED + MAX_MOTOR_TURN_SPEED_ADJUSTMENT ); 
+    
   }
-  //If left sensor detects hand, then turn left. We increase right motor speed and decrease the left motor speed to turn towards left
-  else if (rightIRSensorValue == HIGH && leftIRSensorValue == LOW )
-  {
-      rotateMotor(MAX_FORWARD_MOTOR_SPEED + MAX_MOTOR_TURN_SPEED_ADJUSTMENT, MAX_FORWARD_MOTOR_SPEED - MAX_MOTOR_TURN_SPEED_ADJUSTMENT); 
-  }
-  //If distance is between min and max then go straight
-  else if (distance >= MIN_DISTANCE && distance <= MAX_DISTANCE)
-  {
-    rotateMotor(MAX_FORWARD_MOTOR_SPEED, MAX_FORWARD_MOTOR_SPEED);
-  }
-  //stop the motors
-  else 
-  {
-    rotateMotor(0, 0);
-  }
-}
-
-
-void rotateMotor(int rightMotorSpeed, int leftMotorSpeed)
-{
-  if (rightMotorSpeed < 0)
-  {
-    digitalWrite(rightMotorPin1,LOW);
-    digitalWrite(rightMotorPin2,HIGH);    
-  }
-  else if (rightMotorSpeed > 0)
-  {
-    digitalWrite(rightMotorPin1,HIGH);
-    digitalWrite(rightMotorPin2,LOW);      
-  }
-  else
-  {
-    digitalWrite(rightMotorPin1,LOW);
-    digitalWrite(rightMotorPin2,LOW);      
-  }
-
-  if (leftMotorSpeed < 0)
-  {
-    digitalWrite(leftMotorPin1,LOW);
-    digitalWrite(leftMotorPin2,HIGH);    
-  }
-  else if (leftMotorSpeed > 0)
-  {
-    digitalWrite(leftMotorPin1,HIGH);
-    digitalWrite(leftMotorPin2,LOW);      
-  }
-  else 
-  {
-    digitalWrite(leftMotorPin1,LOW);
-    digitalWrite(leftMotorPin2,LOW);      
-  }
-  analogWrite(enableRightMotor, abs(rightMotorSpeed));
-  analogWrite(enableLeftMotor, abs(leftMotorSpeed));    
 }
